@@ -16,6 +16,11 @@ export const InputTodo = ({ task, setTask, onSave, setOnSave }: Props) => {
    const { createTodo, updateTodo } = useTodo()
 
    const handleSubmit = async () => {
+      if (task === null) {
+         toast.warning('Digite a tarefa antes de salvar.')
+         return
+      }
+
       if (onSave === 'create') {
          const todo = task && await createTodo(task.title, user?.id as number)
 
@@ -41,18 +46,33 @@ export const InputTodo = ({ task, setTask, onSave, setOnSave }: Props) => {
       }
    }
 
+   const handleCancel = () => {
+      setTask(null)
+      setOnSave('create')
+   }
+
    return (
-      <div className="flex gap-4">
+      <div className="flex flex-col md:flex-row gap-4">
          <Input
             placeholder="O que precisa ser feito?"
             value={task?.title || ''}
             onChange={(e) => setTask({ ...task, title: e.target.value } as Todo)}
             className="text-zinc-400 font-bold" />
 
-         <Button
-            onClick={handleSubmit}
-            className="text-white bg-blue-400 cursor-pointer hover:bg-blue-500">
-            {onSave === 'create' ? 'Adicionar' : 'Atualizar'}</Button>
+         <div className="flex gap-4">
+            <Button
+               onClick={handleSubmit}
+               className="flex-1 text-white bg-blue-400 cursor-pointer hover:bg-blue-500">
+               {onSave === 'create' ? 'Adicionar' : 'Atualizar'}</Button>
+
+            {onSave === 'update' &&
+               <Button
+                  onClick={handleCancel}
+                  className="flex-1 text-white bg-red-400 cursor-pointer hover:bg-red-500">
+                  Cancelar</Button>
+            }
+         </div>
+
       </div>
    )
 }

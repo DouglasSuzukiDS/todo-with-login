@@ -44,16 +44,16 @@ export const TableTodo = ({ task, setTask, onSave, setOnSave }: Props) => {
 
             <TableHeader>
                <TableRow className="text-center text-zinc-400">
-                  <TableHead className="w-[80px] text-center text-zinc-400">Concluído</TableHead>
-                  <TableHead className="text-zinc-400 border-x">Tarefa</TableHead>
-                  <TableHead className="w-[80px] text-center text-zinc-400">Ação</TableHead>
+                  <TableHead className="w-6 text-center text-zinc-400">Concluído</TableHead>
+                  <TableHead className="flex-1 text-zinc-400 border-x">Tarefa</TableHead>
+                  <TableHead className="w-8 text-center text-zinc-400">Ação</TableHead>
                </TableRow>
             </TableHeader>
 
             <TableBody>
                {todos.map(todo => (
                   <TableRow key={todo.id} className="text-center">
-                     <TableCell className="w-[80px] text-center">
+                     <TableCell className="w-6 text-center">
                         <Button
                            variant="link" size="sm"
                            onClick={() => handleToggleCompleted(todo.id)}
@@ -64,9 +64,10 @@ export const TableTodo = ({ task, setTask, onSave, setOnSave }: Props) => {
                         </Button>
                      </TableCell>
 
-                     <TableCell className={`text-left text-zinc-400 flex-1 ${todo.completed && 'line-through italic'}`}>{todo.title}</TableCell>
+                     <TableCell
+                        className={`flex-1 text-left text-zinc-400 truncate ${todo.completed && 'line-through italic'}`}>{todo.title}</TableCell>
 
-                     <TableCell className="w-[80px]">
+                     <TableCell className="w-8">
                         <div className="flex gap-2 justify-center">
                            <Button variant="link" size="sm"
                               disabled={todo.completed}
