@@ -12,7 +12,7 @@ type Props = {
 }
 export const InputField = ({ label, type = 'text', placeholder, disabled, onFocus, value, onChange }: Props) => {
    return (
-      <div className="w-full md:max-w-sm flex flex-col gap-4">
+      <div className="w-full flex flex-col gap-4">
          <Label
             htmlFor={label}
             className="text-zinc-400">{label}</Label>
