@@ -1,19 +1,19 @@
 'use client'
 
 import { useAuth } from "@/store/auth"
-import { Auth } from "./auth"
+import { Auth } from "../auth/auth"
 import { useEffect, useState } from "react"
-import { Button } from "./ui/button"
-import { InputTodo } from "./todo/input-todo"
-import { TableTodo } from "./todo/table-todo"
+import { Button } from "../ui/button"
+import { InputTodo } from "../todo/input-todo"
+import { TableTodo } from "../todo/table-todo"
 import { useTodo } from "@/store/todo"
 import { getAuthToken } from "@/utils/cookie"
 import { api } from "@/utils/api"
 import { Todo } from "@/types/todo"
-import { NotFoundTodo } from "./todo/not-found-todo"
+import { NotFoundTodo } from "../todo/not-found-todo"
 
 export const TodoContainer = () => {
-   const { user, setUser, getUser, token, setToken, signOut } = useAuth()
+   const { user, getUser, token, setToken, signOut } = useAuth()
    const { todos, getTodos } = useTodo()
 
    const [task, setTask] = useState<Todo | null>(null)
@@ -45,7 +45,7 @@ export const TodoContainer = () => {
    }, [user])
 
    return (
-      <main className="w-full h-screen flex flex-col items-center p-4 md:p-10 bg-zinc-950">
+      <main className="w-full h-screen flex flex-col justify-center items-center p-4 md:justify-normal md:p-10 bg-zinc-950">
          <h1 className="text-4xl text-zinc-400 font-bold">TODO LIST</h1>
 
          {user && token && <div className="flex items-center gap-4 my-5">
@@ -53,7 +53,8 @@ export const TodoContainer = () => {
 
             <Button
                variant={'destructive'}
-               onClick={() => signOut(token as string)}>Sair</Button>
+               onClick={() => signOut(token as string)}
+               className="cursor-pointer">Sair</Button>
          </div>}
 
          {!user && !token &&
@@ -65,7 +66,6 @@ export const TodoContainer = () => {
                <InputTodo
                   task={task} setTask={setTask}
                   onSave={onSave} setOnSave={setOnSave} />
-
 
                {todos.length >= 1 ?
                   <TableTodo
