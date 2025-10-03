@@ -55,7 +55,7 @@ export const InputTodo = ({ task, setTask, onSave, setOnSave }: Props) => {
       <div className="flex flex-col md:flex-row gap-4">
          <Input
             placeholder="O que precisa ser feito?"
-            value={task?.title || ''}
+            value={task && task.title || ''}
             onChange={(e) => setTask({ ...task, title: e.target.value } as Todo)}
             className="text-zinc-400 font-bold" />
 

@@ -67,11 +67,11 @@ export const Auth = () => {
          toast.warning(`
             Preencha todos os campos corretamente para se cadastrar.
 
-            ${fieldErrors.name && `Nome: ${fieldErrors.name}\n`}
+            ${fieldErrors.name ? `Nome: ${fieldErrors.name}\n` : ''}
 
-            ${fieldErrors.email && `Email: ${fieldErrors.email}\n`}
+            ${fieldErrors.email ? `Email: ${fieldErrors.email}\n` : ''}
 
-            ${fieldErrors.password && `Senha: ${fieldErrors.password}\n`}
+            ${fieldErrors.password ? `Senha: ${fieldErrors.password}\n` : ''}
          `)
       }
 
