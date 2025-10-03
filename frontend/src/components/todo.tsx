@@ -16,8 +16,6 @@ export const Todo = () => {
                setToken(token.value)
             }
          })
-
-
    }, [])
 
    useEffect(() => {
@@ -25,10 +23,6 @@ export const Todo = () => {
          getUser(token as string)
       }
    }, [token])
-
-   useEffect(() => {
-      console.log(user, token)
-   }, [user])
 
    return (
       <main className="w-full h-screen flex flex-col items-center justify-center bg-zinc-950">
@@ -38,6 +32,7 @@ export const Todo = () => {
             <p className="text-zinc-400 font-bold">{user?.name && `Logado como ${user.name}`}</p>
 
             <Button
+               variant={'destructive'}
                onClick={() => logout(token as string)}>Sair</Button>
          </div>
 

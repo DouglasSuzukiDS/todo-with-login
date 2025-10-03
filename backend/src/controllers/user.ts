@@ -3,17 +3,25 @@ import { userSchema } from '../schemas/user'
 import * as userService from '../services/user'
 
 export const getUser: RequestHandler = async (req, res) => {
-   const { email } = req.query
+   try {
+      const { email } = req.query
 
-   const user = await userService.getUser(email as string)
+      if (!email) return res.status(400).json({ message: "Email é obrigatório e deve ser uma string" })
 
-   if (!user) return res.status(404).json({ message: "Usuário não encontrado" })
 
-   res.status(200).json({
-      id: user.id,
-      name: user.name,
-      token: user.token,
-   })
+      const user = await userService.getUser(email as string)
+
+      if (!user) return res.status(404).json({ message: "Usuário não encontrado" })
+
+      res.status(200).json({
+         id: user.id,
+         name: user.name,
+         email: user.email,
+      })
+   } catch (error) {
+      console.error('Erro no getUser:', error)
+      res.status(500).json({ message: "Erro interno do servidor" })
+   }
 }
 
 export const getUserByToken: RequestHandler = async (req, res) => {

@@ -19,17 +19,32 @@ export const Auth = () => {
    const [find, setFind] = useState(false)
 
    const handleFindEmail = async () => {
-      if (!email) return
-
-      const findUser = await api.get('/user', { params: { email } })
-
-      if (!findUser.data.email) {
-         setFind(false)
-         setStep(2)
+      if (!email) {
+         toast.error('Digite um email válido')
+         return
       }
 
-      setFind(true)
-      setStep(2)
+      try {
+         await api.get('/user', { params: { email } })
+
+         setFind(true)
+
+         setStep(2)
+
+         toast.info('Digite sua senha.')
+
+      } catch (err: any) {
+         if (err.response?.status === 404) {
+            setFind(false)
+
+            setStep(2)
+
+            toast.info('Realize seu cadastro!')
+         } else {
+            toast.error('Erro ao verificar email. Tente novamente.')
+            console.error('Erro:', err)
+         }
+      }
    }
 
    const handleSubmit = async () => {
@@ -37,6 +52,12 @@ export const Auth = () => {
          const userCreated = await signUp(name, email, password)
 
          userCreated ? toast.success('Usuário cadastrado com sucesso!') : toast.error('Erro ao cadastrar usuário')
+
+         setName('')
+         setPassword('')
+         setEmail('')
+         setStep(1)
+         setFind(false)
       }
 
       if (find && email && password) {
@@ -66,43 +87,12 @@ export const Auth = () => {
             }
 
             {!find && step === 2 &&
-               < div >
-                  {/* <div className="grid w-full max-w-sm items-center gap-4 ">
-                     <Label
-                        htmlFor="name"
-                        className="text-zinc-400">Nome</Label>
-
-                     <Input
-                        id="name"
-                        type="text"
-                        placeholder="Nome"
-                        value={name}
-                        onChange={e => setName(e.target.value)}
-                        className="text-zinc-400"
-                     />
-                     </div>
-
-                  <div className="grid w-full max-w-sm items-center gap-4 ">
-                     <Label
-                        htmlFor="password"
-                        className="text-zinc-400">Senha</Label>
-
-                     <Input
-                        id="password"
-                        type="password"
-                        placeholder="Senha"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        className="text-zinc-400"
-                     />
-                  </div> */}
-
+               <div className="flex flex-col gap-4">
                   <InputField
                      label="Nome"
                      placeholder="Nome"
                      value={name}
                      onChange={setName} />
-
 
                   <InputField
                      label="Senha"
@@ -114,11 +104,17 @@ export const Auth = () => {
             }
 
             {step === 1 &&
-               <Button onClick={handleFindEmail}>Proseguir</Button>
+               <Button
+                  onClick={handleFindEmail}
+                  className="text-white bg-blue-400 cursor-pointer hover:bg-blue-500">Proseguir</Button>
             }
 
-            {step === 2 && find &&
-               <Button onClick={handleSubmit}>{find ? 'Entrar' : 'Cadastrar'}</Button>
+            {step === 2 &&
+               <Button
+                  onClick={handleSubmit}
+                  className="text-white bg-blue-400 cursor-pointer hover:bg-blue-500">
+                  {find ? 'Entrar' : 'Cadastrar'}
+               </Button>
             }
          </div>
 
