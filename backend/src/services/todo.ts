@@ -4,7 +4,6 @@ import { getUserById } from "./user"
 
 export const getTodos = async (userId: number) => {
    const getUser = await getUserById(userId)
-   console.log(getUser)
 
    if (!getUser) return null
 
@@ -43,9 +42,26 @@ export const updateTodo = async (id: number, userId: number, data: Prisma.TodoUp
    return updatedTodo
 }
 
-export const deleteTodo = async (id: number, userId: number) => {
+export const toggleTodoCompleted = async (id: number) => {
+   const todo = await prisma.todo.findFirst({
+      where: { id }
+   })
+
+   if (!todo) throw new Error("Tarefa não encontrada")
+
+   const updatedTodo = await prisma.todo.update({
+      where: { id },
+      data: {
+         completed: !todo.completed
+      }
+   })
+
+   return updatedTodo
+}
+
+export const deleteTodo = async (id: number) => {
    const todoExists = await prisma.todo.findFirst({
-      where: { id, userId }
+      where: { id }
    })
 
    if (!todoExists) return false

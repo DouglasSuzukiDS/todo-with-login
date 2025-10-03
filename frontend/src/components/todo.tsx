@@ -2,12 +2,19 @@
 
 import { useAuth } from "@/store/auth"
 import { Auth } from "./auth"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { getCookie } from "@/utils/cookie"
 import { Button } from "./ui/button"
+import { InputTodo } from "./todo/input-todo"
+import { TableTodo } from "./todo/table-todo"
+import { useTodo } from "@/store/todo"
 
 export const Todo = () => {
-   const { user, setUser, getUser, token, setToken, logout } = useAuth()
+   const { user, setUser, getUser, token, setToken, signOut } = useAuth()
+   const { getTodos } = useTodo()
+
+   const [task, setTask] = useState('')
+   const [onSave, setOnSave] = useState<'create' | 'update'>('create')
 
    useEffect(() => {
       getCookie()
@@ -22,28 +29,37 @@ export const Todo = () => {
       if (token) {
          getUser(token as string)
       }
+
    }, [token])
 
-   return (
-      <main className="w-full h-screen flex flex-col items-center justify-center bg-zinc-950">
-         <h1 className="text-4xl text-zinc-400 font-bold mb-4">TODO LIST</h1>
+   useEffect(() => {
+      if (user) {
+         getTodos(user.id)
+      }
+   }, [user])
 
-         {user && token && <div className="flex items-center gap-4">
+   return (
+      <main className="w-full h-screen flex flex-col items-center p-10 bg-zinc-950">
+         <h1 className="text-4xl text-zinc-400 font-bold border">TODO LIST</h1>
+
+         {user && token && <div className="flex items-center gap-4 my-5">
             <p className="text-zinc-400 font-bold">{user?.name && `Logado como ${user.name}`}</p>
 
             <Button
                variant={'destructive'}
-               onClick={() => logout(token as string)}>Sair</Button>
-         </div>
-
-         }
+               onClick={() => signOut(token as string)}>Sair</Button>
+         </div>}
 
          {!user && !token &&
             <Auth />
          }
 
          {user && token &&
-            <h1>TODO</h1>
+            <div className="flex flex-col gap-10 w-3/4 border">
+               <InputTodo task={task} setTask={setTask} onSave={onSave} />
+
+               <TableTodo />
+            </div>
          }
       </main>
    )

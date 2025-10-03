@@ -2,9 +2,9 @@ import { RequestHandler } from 'express'
 import * as todoService from '../services/todo'
 
 export const getTodos: RequestHandler = async (req, res) => {
-   const { userId } = req.body
+   const { userId } = req.query
 
-   const todos = await todoService.getTodos(userId)
+   const todos = await todoService.getTodos(parseInt(userId as string))
 
    res.status(200).json(todos)
 }
@@ -30,11 +30,20 @@ export const updateTodo: RequestHandler = async (req, res) => {
    res.status(200).json(updatedTodo)
 }
 
+export const toggleTodoCompleted: RequestHandler = async (req, res) => {
+   const { id } = req.params
+
+   const updatedTodo = await todoService.toggleTodoCompleted(parseInt(id))
+
+   if (!updatedTodo) return res.status(500).json({ message: "Não foi possível atualizar a tarefa" })
+
+   res.status(200).json(updatedTodo)
+}
+
 export const deleteTodo: RequestHandler = async (req, res) => {
    const { id } = req.params
-   const { userId } = req.body
 
-   const deleted = await todoService.deleteTodo(parseInt(id), userId)
+   const deleted = await todoService.deleteTodo(parseInt(id))
 
    res.status(200).json({ deleted })
 }

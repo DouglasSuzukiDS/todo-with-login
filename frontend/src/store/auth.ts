@@ -1,6 +1,8 @@
+import { Todo } from "@/types/todo";
 import { User } from "@/types/user";
 import { api } from "@/utils/api";
 import { deleteCookie, setCookie } from "@/utils/cookie";
+import { get } from "http";
 import { create } from "zustand";
 
 type UserStore = {
@@ -9,17 +11,17 @@ type UserStore = {
 
    token: string | null
    setToken: (token: string | null) => void
-
+  
    getUser: (token: string) => Promise<boolean>
 
    signUp: (name: string, email: string, password: string) => Promise<boolean>
 
    signIn: (email: string, password: string) => Promise<boolean>
 
-   logout: (token: string) => Promise<boolean>
+   signOut: (token: string) => Promise<boolean>
 }
 
-export const useAuth = create<UserStore>((set) => ({
+export const useAuth = create<UserStore>((set, get) => ({
    user: null,
 
    setUser: (user: User | null) => set({ user }),
@@ -74,7 +76,7 @@ export const useAuth = create<UserStore>((set) => ({
       }
    },
 
-   logout: async (token: string) => {
+   signOut: async (token: string) => {
       try {
          const loggedOut = await api.post('/auth/logout', { data: { token } })
 
