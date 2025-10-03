@@ -1,7 +1,7 @@
 'use server'
 import { cookies } from "next/headers"
 
-export const getCookie = async () => {
+export const getAuthToken = async () => {
    const cookie = await cookies()
 
    const token = cookie.get('token')
@@ -11,13 +11,13 @@ export const getCookie = async () => {
    return token
 }
 
-export const setCookie = async (token: string) => {
+export const setAuthToken = async (token: string) => {
    const cookie = await cookies()
 
    cookie.set('token', token)
 }
 
-export const deleteCookie = async () => {
+export const deleteAuthToken = async () => {
    const cookie = await cookies()
 
    cookie.delete('token')

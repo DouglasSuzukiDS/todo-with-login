@@ -25,7 +25,7 @@ export const Auth = () => {
       }
 
       try {
-         await api.get('/user', { params: { email } })
+         await api.post('/user', { email })
 
          setFind(true)
 

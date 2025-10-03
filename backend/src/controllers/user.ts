@@ -4,7 +4,7 @@ import * as userService from '../services/user'
 
 export const getUser: RequestHandler = async (req, res) => {
    try {
-      const { email } = req.query
+      const { email } = req.body
 
       if (!email) return res.status(400).json({ message: "Email é obrigatório e deve ser uma string" })
 
@@ -25,7 +25,7 @@ export const getUser: RequestHandler = async (req, res) => {
 }
 
 export const getUserByToken: RequestHandler = async (req, res) => {
-   const { token } = req.query
+   const { token } = req.body
 
    const user = await userService.getUserByToken(token as string)
 

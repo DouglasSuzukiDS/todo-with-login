@@ -1,8 +1,6 @@
-import { Todo } from "@/types/todo";
 import { User } from "@/types/user";
 import { api } from "@/utils/api";
-import { deleteCookie, setCookie } from "@/utils/cookie";
-import { get } from "http";
+import { deleteAuthToken, setAuthToken } from "@/utils/cookie";
 import { create } from "zustand";
 
 type UserStore = {
@@ -11,7 +9,7 @@ type UserStore = {
 
    token: string | null
    setToken: (token: string | null) => void
-  
+
    getUser: (token: string) => Promise<boolean>
 
    signUp: (name: string, email: string, password: string) => Promise<boolean>
@@ -32,7 +30,7 @@ export const useAuth = create<UserStore>((set, get) => ({
 
    getUser: async (token: string) => {
       try {
-         const user = await api.get('/user/token', { params: { token } })
+         const user = await api.post('/user/token', { token })
 
          if (user.status === 200) {
 
@@ -65,7 +63,7 @@ export const useAuth = create<UserStore>((set, get) => ({
          if (logged.status === 200) {
             set({ user: logged.data.user, token: logged.data.token })
 
-            setCookie(logged.data.token)
+            setAuthToken(logged.data.token)
 
             return true
          }
@@ -77,15 +75,17 @@ export const useAuth = create<UserStore>((set, get) => ({
    },
 
    signOut: async (token: string) => {
+      const { setToken } = get()
+
       try {
-         const loggedOut = await api.post('/auth/logout', { data: { token } })
+         const loggedOut = await api.post('/auth/signout', { data: { token } })
 
          if (loggedOut.status === 200) {
 
             set({ user: null, token: null })
 
-            setCookie('')
-            deleteCookie()
+            setToken('')
+            deleteAuthToken()
 
             return true
          }

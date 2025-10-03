@@ -3,6 +3,7 @@ import * as userService from "../services/user"
 import bcrypt from "bcryptjs"
 import jsonwebtoken from "jsonwebtoken"
 import { userSchema } from "../schemas/user"
+import { createJWT } from "../utils/create-jwt"
 
 export const signUp: RequestHandler = async (req, res) => {
    const safeParse = await userSchema.safeParse(req.body)
@@ -30,14 +31,14 @@ export const signIn: RequestHandler = async (req, res) => {
 
    if (!comparePassword) return res.status(404).json({ messages: "Email/Senha inválidos. PASS" })
 
-   const token = jsonwebtoken.sign({ email }, process.env.JWT_SECRET_KEY as string)
+   const token = await createJWT(email)
 
    await userService.updateUserToken(email, token)
 
    res.status(200).json({ token })
 }
 
-export const logout: RequestHandler = async (req, res) => {
+export const signOut: RequestHandler = async (req, res) => {
    const { token } = req.body
 
    const user = await userService.getUserByToken(token)

@@ -3,11 +3,12 @@
 import { useAuth } from "@/store/auth"
 import { Auth } from "./auth"
 import { useEffect, useState } from "react"
-import { getCookie } from "@/utils/cookie"
 import { Button } from "./ui/button"
 import { InputTodo } from "./todo/input-todo"
 import { TableTodo } from "./todo/table-todo"
 import { useTodo } from "@/store/todo"
+import { getAuthToken } from "@/utils/cookie"
+import { api } from "@/utils/api"
 
 export const Todo = () => {
    const { user, setUser, getUser, token, setToken, signOut } = useAuth()
@@ -17,12 +18,15 @@ export const Todo = () => {
    const [onSave, setOnSave] = useState<'create' | 'update'>('create')
 
    useEffect(() => {
-      getCookie()
+      getAuthToken()
          .then(token => {
             if (token !== null) {
                setToken(token.value)
+
+               api.defaults.headers.common['Authorization'] = `Bearer ${token.value}`
             }
          })
+         .catch(signOut)
    }, [])
 
    useEffect(() => {
