@@ -11,7 +11,7 @@ type TodoStore = {
 
    createTodo: (title: string, userId: number) => Promise<boolean>
 
-   updateTodo: (id: number, title: string) => void
+   updateTodo: (id: number, title: string, userId: number) => Promise<boolean>
 
    toggleTodoCompleted: (id: number) => Promise<boolean>
 
@@ -42,8 +42,18 @@ export const useTodo = create<TodoStore>((set, get) => ({
       return false
    },
 
-   updateTodo: async (id: number, title: string) => {
+   updateTodo: async (id: number, title: string, userId: number) => {
+      const { getTodos } = get()
 
+      const todo = await api.put(`/todo/${id}`, { title })
+
+      if (todo.status === 200) {
+         getTodos(userId)
+
+         return true
+      }
+
+      return false
    },
 
    toggleTodoCompleted: async (id: number) => {

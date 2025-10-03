@@ -5,23 +5,36 @@ import { useTodo } from "@/store/todo"
 import { Button } from "../ui/button"
 import { Check, CheckCheck, CheckSquare, Edit, Edit2, Square, Trash2 } from "lucide-react"
 import { toast } from "sonner"
+import { Todo } from "@/types/todo"
 
-export const TableTodo = () => {
+type Props = {
+   task: Todo | null
+   setTask: (task: Todo | null) => void
+   onSave: 'update' | 'create'
+   setOnSave: (mode: 'update' | 'create') => void
+}
+
+export const TableTodo = ({ task, setTask, onSave, setOnSave }: Props) => {
    const { user } = useAuth()
    const { todos, toggleTodoCompleted, deleteTodo } = useTodo()
-
-   const handleDelete = async (id: number) => {
-      const deleted = await deleteTodo(id)
-
-      deleted ?
-         toast.success('Tarefa deletada com sucesso!') : toast.error('Erro ao deletar tarefa. Tente novamente.')
-   }
 
    const handleToggleCompleted = async (id: number) => {
       const updated = await toggleTodoCompleted(id)
 
       updated ?
          toast.success('Tarefa atualizada com sucesso!') : toast.error('Erro ao atualizar tarefa. Tente novamente.')
+   }
+
+   const handleUpdate = async (task: Todo) => {
+      setTask(task)
+      setOnSave('update')
+   }
+
+   const handleDelete = async (id: number) => {
+      const deleted = await deleteTodo(id)
+
+      deleted ?
+         toast.success('Tarefa deletada com sucesso!') : toast.error('Erro ao deletar tarefa. Tente novamente.')
    }
 
    return (
@@ -51,12 +64,14 @@ export const TableTodo = () => {
                         </Button>
                      </TableCell>
 
-                     <TableCell className="text-left text-zinc-400 flex-1">{todo.title}</TableCell>
+                     <TableCell className={`text-left text-zinc-400 flex-1 ${todo.completed && 'line-through italic'}`}>{todo.title}</TableCell>
 
                      <TableCell className="w-[80px]">
                         <div className="flex gap-2 justify-center">
                            <Button variant="link" size="sm"
-                              className="cursor-pointer border border-yellow-400 hover:border-yellow-600">
+                              disabled={todo.completed}
+                              onClick={() => handleUpdate(todo)}
+                              className={`cursor-pointer border border-yellow-400 hover:border-yellow-600 ${todo.completed && 'opacity-50 cursor-not-allowed'}`}>
                               <Edit className="text-yellow-400 w-4 h-4" />
                            </Button>
 

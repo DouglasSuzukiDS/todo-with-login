@@ -1,7 +1,7 @@
-import { Todo } from "@/components/todo";
+import { TodoContainer } from "@/components/todo";
 
 export default function Home() {
   return (
-    <Todo />
+    <TodoContainer />
   );
 }

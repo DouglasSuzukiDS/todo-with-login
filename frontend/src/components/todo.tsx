@@ -9,12 +9,13 @@ import { TableTodo } from "./todo/table-todo"
 import { useTodo } from "@/store/todo"
 import { getAuthToken } from "@/utils/cookie"
 import { api } from "@/utils/api"
+import { Todo } from "@/types/todo"
 
-export const Todo = () => {
+export const TodoContainer = () => {
    const { user, setUser, getUser, token, setToken, signOut } = useAuth()
    const { getTodos } = useTodo()
 
-   const [task, setTask] = useState('')
+   const [task, setTask] = useState<Todo | null>(null)
    const [onSave, setOnSave] = useState<'create' | 'update'>('create')
 
    useEffect(() => {
@@ -60,9 +61,9 @@ export const Todo = () => {
 
          {user && token &&
             <div className="flex flex-col gap-10 w-3/4 border">
-               <InputTodo task={task} setTask={setTask} onSave={onSave} />
+               <InputTodo task={task} setTask={setTask} onSave={onSave} setOnSave={setOnSave} />
 
-               <TableTodo />
+               <TableTodo task={task} setTask={setTask} onSave={onSave} setOnSave={setOnSave} />
             </div>
          }
       </main>
