@@ -55,9 +55,15 @@ npm install
 
 **Configure as variáveis de ambiente:**
 Edite o arquivo `.envExample` para `.env` com suas credencias USER e PASSWORD de coneção do seu DB PostgreSQL:
+
+```js
+Necessário criar o DB/Schema no Postgre chamado todo
+```
 ```env
-DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/todoapp"
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/todo?schema=public"
+
 PORT=3001
+
 JWT_SECRET_KEY="sua-chave-secreta-jwt-muito-forte-aqui"
 ```
 
