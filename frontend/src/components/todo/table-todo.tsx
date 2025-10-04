@@ -6,15 +6,15 @@ import { Button } from "../ui/button"
 import { Check, CheckCheck, CheckSquare, Edit, Edit2, Square, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 import { Todo } from "@/types/todo"
+import { TodoSelected } from "@/types/todo-selected"
 
 type Props = {
-   task: Todo | null
-   setTask: (task: Todo | null) => void
+   setTask: (task: TodoSelected | null) => void
    onSave: 'update' | 'create'
    setOnSave: (mode: 'update' | 'create') => void
 }
 
-export const TableTodo = ({ task, setTask, onSave, setOnSave }: Props) => {
+export const TableTodo = ({ setTask, onSave, setOnSave }: Props) => {
    const { user } = useAuth()
    const { todos, toggleTodoCompleted, deleteTodo } = useTodo()
 
@@ -26,7 +26,11 @@ export const TableTodo = ({ task, setTask, onSave, setOnSave }: Props) => {
    }
 
    const handleUpdate = async (task: Todo) => {
-      setTask(task)
+      setTask({
+         id: task.id,
+         title: task.title
+      })
+
       setOnSave('update')
    }
 
@@ -45,8 +49,8 @@ export const TableTodo = ({ task, setTask, onSave, setOnSave }: Props) => {
             <TableHeader>
                <TableRow className="text-center text-zinc-400">
                   <TableHead className="w-6 text-center text-zinc-400">Concluído</TableHead>
-                  <TableHead className="flex-1 text-zinc-400 border-x">Tarefa</TableHead>
-                  <TableHead className="w-8 text-center text-zinc-400">Ação</TableHead>
+                  <TableHead className="flex-1 text-zinc-400">Tarefa</TableHead>
+                  <TableHead className="w-8 text-center text-zinc-400">Ações</TableHead>
                </TableRow>
             </TableHeader>
 

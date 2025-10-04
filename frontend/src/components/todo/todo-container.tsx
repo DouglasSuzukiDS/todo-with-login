@@ -11,12 +11,13 @@ import { getAuthToken } from "@/utils/cookie"
 import { api } from "@/utils/api"
 import { Todo } from "@/types/todo"
 import { NotFoundTodo } from "../todo/not-found-todo"
+import { TodoSelected } from "@/types/todo-selected"
 
 export const TodoContainer = () => {
    const { user, getUser, token, setToken, signOut } = useAuth()
    const { todos, getTodos } = useTodo()
 
-   const [task, setTask] = useState<Todo | null>(null)
+   const [task, setTask] = useState<TodoSelected | null>(null)
    const [onSave, setOnSave] = useState<'create' | 'update'>('create')
 
    useEffect(() => {
@@ -69,7 +70,7 @@ export const TodoContainer = () => {
 
                {todos.length >= 1 ?
                   <TableTodo
-                     task={task} setTask={setTask}
+                     setTask={setTask}
                      onSave={onSave} setOnSave={setOnSave} /> :
                   <NotFoundTodo />
                }

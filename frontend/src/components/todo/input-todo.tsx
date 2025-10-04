@@ -4,10 +4,11 @@ import { Input } from "../ui/input"
 import { useAuth } from "@/store/auth"
 import { toast } from "sonner"
 import { Todo } from "@/types/todo"
+import { TodoSelected } from "@/types/todo-selected"
 
 type Props = {
-   task: Todo | null
-   setTask: (task: Todo | null) => void
+   task: TodoSelected | null
+   setTask: (task: TodoSelected | null) => void
    onSave: 'update' | 'create'
    setOnSave: (mode: 'update' | 'create') => void
 }
@@ -16,7 +17,7 @@ export const InputTodo = ({ task, setTask, onSave, setOnSave }: Props) => {
    const { createTodo, updateTodo } = useTodo()
 
    const handleSubmit = async () => {
-      if (task === null) {
+      if (task === null || !task.title || task.title.trim() === '') {
          toast.warning('Digite a tarefa antes de salvar.')
          return
       }
@@ -32,7 +33,7 @@ export const InputTodo = ({ task, setTask, onSave, setOnSave }: Props) => {
             toast.error('Erro ao criar tarefa. Tente novamente.')
          }
       } else {
-         const todo = task && await updateTodo(task.id, task.title, task.userId)
+         const todo = task && await updateTodo(task.id, task.title, user?.id as number)
 
          if (todo) {
             toast.success('Tarefa atualizada com sucesso!')
@@ -56,7 +57,7 @@ export const InputTodo = ({ task, setTask, onSave, setOnSave }: Props) => {
          <Input
             placeholder="O que precisa ser feito?"
             value={task && task.title || ''}
-            onChange={(e) => setTask({ ...task, title: e.target.value } as Todo)}
+            onChange={(e) => setTask({ id: task?.id, title: e.target.value } as TodoSelected)}
             className="text-zinc-400 font-bold" />
 
          <div className="flex gap-4">
