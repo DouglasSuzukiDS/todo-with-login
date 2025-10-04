@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "../ui/button"
 import { useAuth } from "@/store/auth"
 import { api } from "@/utils/api"
@@ -9,15 +9,18 @@ import { InputField } from "./input-field"
 import { emailSchema } from "@/schema/email-schema"
 import { userSchema } from "@/schema/user-schema"
 import { loginSchema } from "@/schema/login-schema"
+import { useRouter } from "next/navigation"
 
 export const Auth = () => {
-   const { signIn, signUp } = useAuth()
+   const { signIn, signUp, token, user } = useAuth()
 
    const [name, setName] = useState('')
    const [email, setEmail] = useState('')
    const [password, setPassword] = useState('')
    const [step, setStep] = useState(1)
    const [find, setFind] = useState(false)
+
+   const router = useRouter()
 
    const handleFindEmail = async () => {
       const safeEmail = emailSchema.safeParse({ email })
@@ -58,7 +61,27 @@ export const Auth = () => {
       setFind(false)
    }
 
-   const handleSubmit = async () => {
+   const handleSignIn = async () => {
+      const loginSafeParse = loginSchema.safeParse({ email, password })
+
+      if (!loginSafeParse.success) {
+         toast.warning('Preencha todos os campos corretamente para entrar.')
+         return
+      }
+
+      if (email && password) {
+         const userLoggedIn = await signIn(email, password)
+
+         if (userLoggedIn === true) {
+            toast.success('Logado!')
+            router.push('/todo')
+         } else {
+            toast.error('Erro ao logar')
+         }
+      }
+   }
+
+   const handleSignUp = async () => {
       const createUserSafeParse = userSchema.safeParse({ name, email, password })
 
       if (!createUserSafeParse.success) {
@@ -75,35 +98,21 @@ export const Auth = () => {
          `)
       }
 
-      if (!find && createUserSafeParse.success) {
-         const userCreated = await signUp(name, email, password)
+      const userCreated = await signUp(name, email, password)
 
-         userCreated ?
-            toast.success('Usuário cadastrado com sucesso!') : toast.error('Erro ao cadastrar usuário')
+      userCreated ?
+         toast.success('Usuário cadastrado com sucesso!') : toast.error('Erro ao cadastrar usuário')
 
-         setName('')
-         setPassword('')
-         setEmail('')
-         setStep(1)
-         setFind(false)
-
-         return
-      }
-
-      const loginSafeParse = loginSchema.safeParse({ email, password })
-
-      if (find && !loginSafeParse.success) {
-         toast.warning('Preencha todos os campos corretamente para entrar.')
-         return
-      }
-
-      if (find && email && password) {
-         const userLoggedIn = await signIn(email, password)
-
-         userLoggedIn === true ?
-            toast.success('Logado!') : toast.error('Erro ao logar')
-      }
+      setName('')
+      setPassword('')
+      setEmail('')
+      setStep(1)
+      setFind(false)
    }
+
+   useEffect(() => {
+      token && user && router.push('/todo')
+   }, [])
 
    return (
       <div className="w-full md:w-1/3 flex flex-col gap-4 mt-5 md:mt-10">
@@ -159,12 +168,13 @@ export const Auth = () => {
                </Button>
 
                <Button
-                  onClick={handleSubmit}
+                  onClick={find ? handleSignIn : handleSignUp}
                   className="flex-1 text-white bg-blue-400 cursor-pointer hover:bg-blue-500">
                   {find ? 'Entrar' : 'Cadastrar'}
                </Button>
             </div>
          }
       </div>
+
    )
 }

@@ -3,7 +3,6 @@ import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { useAuth } from "@/store/auth"
 import { toast } from "sonner"
-import { Todo } from "@/types/todo"
 import { TodoSelected } from "@/types/todo-selected"
 
 type Props = {

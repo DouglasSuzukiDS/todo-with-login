@@ -14,7 +14,7 @@ export const createTodo: RequestHandler = async (req, res) => {
 
    const todo = await todoService.createTodo(title, userId)
 
-   if (!todo) return res.status(500).json({ message: "Não foi possível criar a tarefa" })
+   if (!todo) return res.status(500).json({ error: "Não foi possível criar a tarefa." })
 
    res.status(201).json(todo)
 }
@@ -25,7 +25,7 @@ export const updateTodo: RequestHandler = async (req, res) => {
 
    const updatedTodo = await todoService.updateTodo(parseInt(id), userId, data)
 
-   if (!updatedTodo) return res.status(500).json({ message: "Não foi possível atualizar a tarefa" })
+   if (!updatedTodo) return res.status(500).json({ error: "Não foi possível atualizar a tarefa." })
 
    res.status(200).json(updatedTodo)
 }
@@ -35,7 +35,7 @@ export const toggleTodoCompleted: RequestHandler = async (req, res) => {
 
    const updatedTodo = await todoService.toggleTodoCompleted(parseInt(id))
 
-   if (!updatedTodo) return res.status(500).json({ message: "Não foi possível atualizar a tarefa" })
+   if (!updatedTodo) return res.status(500).json({ error: "Não foi possível atualizar a tarefa." })
 
    res.status(200).json(updatedTodo)
 }

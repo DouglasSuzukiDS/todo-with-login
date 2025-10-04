@@ -7,8 +7,6 @@ export const getUser = async (email: string) => {
       where: { email }
    })
 
-   console.log(user)
-
    return user ? user : null
 }
 
@@ -31,7 +29,7 @@ export const getUserByToken = async (token: string) => {
 export const createUser = async (data: Prisma.UserCreateInput) => {
    const userExists = await getUser(data.email)
 
-   if (userExists) throw new Error("Não foi possível realizar o cadastro.")
+   if (userExists) return null
 
    const hashedPassword = await bcrypt.hash(data.password, 10)
 
@@ -42,7 +40,7 @@ export const createUser = async (data: Prisma.UserCreateInput) => {
       }
    })
 
-   if (!user) throw new Error("Não foi possível realizar o cadastro.")
+   if (!user) return null
 
    return {
       user: {
@@ -56,7 +54,7 @@ export const createUser = async (data: Prisma.UserCreateInput) => {
 export const updateUser = async (data: Prisma.UserUpdateInput) => {
    const userExists = await getUser(data.email as string)
 
-   if (!userExists) throw new Error("Não foi possível atualizar os dados do usuário")
+   if (!userExists) return null
 
    if (data.password) {
       const hashedPassword = await bcrypt.hash(data.password as string, 10)
@@ -76,7 +74,7 @@ export const updateUser = async (data: Prisma.UserUpdateInput) => {
 export const updateUserToken = async (email: string, token: string) => {
    const user = await getUser(email)
 
-   if (!user) throw new Error("Usuário não encontrado")
+   if (!user) return null
 
    const updatedToken = await prisma.user.update({
       where: { id: user.id },
@@ -91,11 +89,11 @@ export const deleteUser = async (id: number) => {
       where: { id }
    })
 
-   if (!user) throw new Error("Usuário não encontrado")
+   if (!user) return null
 
    await prisma.user.delete({
       where: { id }
    })
 
-   return 'Usuário excluído com sucesso'
+   return { ok: 'Usuário excluído com sucesso' }
 }

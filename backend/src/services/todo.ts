@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "../generated/prisma"
+import { Prisma } from "../generated/prisma"
 import { prisma } from "../utils/prisma"
 import { getUserById } from "./user"
 
@@ -22,6 +22,8 @@ export const createTodo = async (title: string, userId: number) => {
       }
    })
 
+   if (!todo) return null
+
    return todo
 }
 
@@ -30,7 +32,7 @@ export const updateTodo = async (id: number, userId: number, data: Prisma.TodoUp
       where: { id, userId }
    })
 
-   if (!todoExists) throw new Error("Não foi possível atualizar a tarefa")
+   if (!todoExists) return null
 
    const updatedTodo = await prisma.todo.update({
       where: { id },
@@ -47,7 +49,7 @@ export const toggleTodoCompleted = async (id: number) => {
       where: { id }
    })
 
-   if (!todo) throw new Error("Tarefa não encontrada")
+   if (!todo) return null
 
    const updatedTodo = await prisma.todo.update({
       where: { id },

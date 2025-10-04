@@ -6,12 +6,12 @@ export const getUser: RequestHandler = async (req, res) => {
    try {
       const { email } = req.body
 
-      if (!email) return res.status(400).json({ message: "Email é obrigatório e deve ser uma string" })
+      if (!email) return res.status(400).json({ message: "Email inválido." })
 
 
       const user = await userService.getUser(email as string)
 
-      if (!user) return res.status(404).json({ message: "Usuário não encontrado" })
+      if (!user) return res.status(404).json({ error: "Usuário não encontrado." })
 
       res.status(200).json({
          id: user.id,
@@ -19,8 +19,7 @@ export const getUser: RequestHandler = async (req, res) => {
          email: user.email,
       })
    } catch (error) {
-      console.error('Erro no getUser:', error)
-      res.status(500).json({ message: "Erro interno do servidor" })
+      res.status(500).json({ error: "Erro interno do servidor" })
    }
 }
 
@@ -29,7 +28,7 @@ export const getUserByToken: RequestHandler = async (req, res) => {
 
    const user = await userService.getUserByToken(token as string)
 
-   if (!user) return res.status(404).json({ message: "Usuário não encontrado" })
+   if (!user) return res.status(404).json({ error: "Usuário não encontrado." })
 
    res.status(200).json(user)
 }
@@ -38,7 +37,7 @@ export const createUser: RequestHandler = async (req, res) => {
    const safeParse = await userSchema.safeParse(req.body)
 
    if (!safeParse.success) {
-      res.status(400).json({ message: safeParse.error.flatten().fieldErrors })
+      res.status(400).json({ error: safeParse.error.flatten().fieldErrors })
       return
    }
 
@@ -52,11 +51,11 @@ export const updateUserToken: RequestHandler = async (req, res) => {
 
    const user = await userService.getUserByToken(token)
 
-   if (!user) return res.status(404).json({ message: "Usuário não encontrado" })
+   if (!user) return res.status(404).json({ error: "Usuário não encontrado." })
 
    await userService.updateUserToken(user.email, token)
 
-   return res.status(200).json({ message: "Token atualizado com sucesso" })
+   return res.status(200).json({ error: "Token atualizado com sucesso." })
 }
 
 export const updateUser: RequestHandler = async (req, res) => {
@@ -68,7 +67,7 @@ export const updateUser: RequestHandler = async (req, res) => {
       password
    })
 
-   if (!user) return res.status(404).json({ message: "Usuário não encontrado" })
+   if (!user) return res.status(404).json({ error: "Usuário não encontrado." })
 
    return res.status(200).json(user)
 }
@@ -78,7 +77,7 @@ export const deleteUser: RequestHandler = async (req, res) => {
 
    const user = await userService.deleteUser(parseInt(id))
 
-   if (!user) return res.status(404).json({ message: "Usuário não encontrado" })
+   if (!user) return res.status(404).json({ error: "Usuário não encontrado." })
 
-   return res.status(200).json({ message: "Usuário deletado com sucesso" })
+   return res.status(200).json({ error: "Usuário deletado com sucesso." })
 }
